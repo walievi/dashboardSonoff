@@ -125,8 +125,8 @@ $menu->span = "user";
 $menus[] = $menu;
 
 $menu = new stdClass();
-$menu->title = "Laboratório 4";
-$menu->action = "lab4";
+$menu->title = "Laboratório 5";
+$menu->action = "lab5";
 $menu->span = "user";
 
 $menus[] = $menu;
