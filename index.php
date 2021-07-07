@@ -1,37 +1,6 @@
 <?php require_once "functions.php" ?>
 
-<?php 
-
-$array = array();
-
-$obj = new stdClass();
-$obj->coluna1 = "TESTE";
-$obj->coluna2 = "TESTE";
-$obj->coluna3 = "TESTE";
-$obj->coluna4 = "TESTE";
-
-$array[] = $obj;
-
-
-$obj = new stdClass();
-$obj->coluna1 = "TESTE";
-$obj->coluna2 = "TESTE";
-$obj->coluna3 = "TESTE";
-$obj->coluna4 = "TESTE";
-
-$array[] = $obj;
-
-
-$obj = new stdClass();
-$obj->coluna1 = "TESTE";
-$obj->coluna2 = "TESTE";
-$obj->coluna3 = "TESTE";
-$obj->coluna4 = "TESTE";
-
-$array[] = $obj;
-
-
-?>
+<?php include "temp.php"; ?>
 
 
 <!doctype html>
@@ -92,52 +61,6 @@ $array[] = $obj;
   <div class="row">
 
 
-<?php 
-$menus = array();
-
-$menu = new stdClass();
-$menu->title = "Dashboard";
-$menu->action = "";
-$menu->span = "home";
-
-$menus[] = $menu;
-
-
-$menu = new stdClass();
-$menu->title = "Laboratório 1";
-$menu->action = "lab1";
-$menu->span = "user";
-
-$menus[] = $menu;
-
-$menu = new stdClass();
-$menu->title = "Laboratório 2";
-$menu->action = "lab2";
-$menu->span = "user";
-
-$menus[] = $menu;
-
-$menu = new stdClass();
-$menu->title = "Laboratório 3";
-$menu->action = "lab3";
-$menu->span = "user";
-
-$menus[] = $menu;
-
-$menu = new stdClass();
-$menu->title = "Laboratório 4";
-$menu->action = "lab4";
-$menu->span = "user";
-
-$menus[] = $menu;
-
-
-
-?>
-
-
-
-
     <?php menus($menus, $_GET["action"]) ?>
 
 
@@ -175,6 +98,8 @@ $menus[] = $menu;
 
     <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
 
-      <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script><script src="dashboard.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
+      <?php montaMatriz() ?>
   </body>
 </html>
