@@ -33,6 +33,63 @@ function prepareWhere($where){
 	return "";
 }
 
+function getLeituras($limit = 5){
+	$con = connect();
+	$rs = $con->prepare("SELECT * FROM leituras ORDER BY momento ASC LIMIT ". $limit);
+
+
+	if($rs->execute()){
+		if($rs->rowCount() < 1)
+			return;
+		
+		$registros = array();
+		while($row = $rs->fetch(PDO::FETCH_OBJ)){
+			$obj = new stdClass();
+
+			foreach ($row as $colName => $colValue) {
+				$obj->{$colName} = $colValue;
+			}
+			$registros[] = $obj;
+		}
+
+		return $registros;
+	}
+    throw new Exception("Deu ruim", true);
+}
+
+
+function saveDadosConsumo($dados, $leituras){
+	$pdo = connect();
+	$pdo->beginTransaction();
+
+	try {
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		$stmt = $pdo->prepare("INSERT INTO dados_leitura(equipamento_id, potencia, tensao, corrente, momento) VALUES(:equipamento_id, :potencia, :tensao, :corrente, :momento)");
+
+		foreach ($dados as $dado) {
+			$fields = array();
+			foreach ($dado as $key => $value)
+				$fields[':'.$key] = $value;
+
+			$stmt->execute($fields);
+		}
+
+
+		$stmt = $pdo->prepare('DELETE FROM leituras WHERE id = :id');
+ 		
+ 		foreach ($leituras as $leituraId) 
+  			$stmt->execute(array(':id' => $leituraId));
+
+  
+	} catch(\Throwable $e) { // use \Exception in PHP < 7.0
+	    $pdo->rollBack();
+	    throw $e;
+	}
+
+	$pdo->commit();
+}
+
 
 function getTable($table, $select = "*", $where = array()){
 	$select = prepareSelect($select);
