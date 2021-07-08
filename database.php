@@ -177,7 +177,7 @@ function insertPing($obj){
 	$pdo = connect();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	$stmt = $pdo->prepare("INSERT INTO tmp_status_pcs(pc_id, ping_result, ligado, momento) VALUES(:pc_id, :ping_result, :ligado , now())");
+	$stmt = $pdo->prepare("INSERT INTO tmp_status_pcs(pc_id, ping_result, ligad, momento) VALUES(:pc_id, :ping_result, :ligado , now())");
 	
 	$fields = array();
 	foreach ($obj as $key => $value)
