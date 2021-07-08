@@ -4,7 +4,7 @@
 	require_once "database.php";
 
 
-	DEFINE ('LIMIT_ERROS_ACEITOS', 100);
+	DEFINE ('LIMIT_ERROS_ACEITOS', 10);
 	$listaDados = array();
 	$idLeituras = array();
 	$logs = array();
