@@ -50,3 +50,50 @@ function menus($menus, $current = ""){
     </nav>
     ';
 }
+
+
+function montaMatriz(){
+  echo '<script src="dashboard.js"></script>';
+}
+
+
+
+
+
+  function tasmotaFaz($ip, $acao){
+
+      $tasmotaAcoes = array(
+          'getPowerStatus' => 'Power',
+          'powerOn' => 'Power%20On',
+          'powerOff' => 'Power%20off',
+          'sensores' => 'Status%208'
+
+      );
+
+
+
+      if(!isset($tasmotaAcoes[$acao]))
+        throw new Exception("Ação inválida", true);
+        
+
+      $url = "http://". $ip ."/cm?cmnd=". $tasmotaAcoes[$acao];
+
+      return json_decode(requestUrl($url));
+  }
+
+
+  function requestUrl($url){
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL,$url);
+
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+      $contents = curl_exec ($ch);
+
+      curl_close ($ch);
+
+      return $contents;
+  }
+
+
+
