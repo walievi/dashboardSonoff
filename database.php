@@ -90,6 +90,30 @@ function saveDadosConsumo($dados, $leituras){
 	$pdo->commit();
 }
 
+function getConfig($chave){
+
+	$con = connect();
+	$rs = $con->prepare("SELECT valor FROM informacoes WHERE chave = :chave ");
+
+
+	if(!$rs->execute(array(":chave" => $chave)))
+		throw new Exception("Erro ao executar a consulta", true);
+		
+
+	if($rs->rowCount() != 1)
+		throw new Exception("Erro na Chave", true);
+	
+
+	while($row = $rs->fetch(PDO::FETCH_OBJ)){
+		return $row->valor;
+	}
+
+	
+
+
+	
+}
+
 
 function getTable($table, $select = "*", $where = array()){
 	$select = prepareSelect($select);
@@ -147,3 +171,20 @@ function salvaLeitura($leitura){
 
 	return $pdo->lastInsertId();
 }
+
+
+function insertPing($obj){
+	$pdo = connect();
+	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	$stmt = $pdo->prepare("INSERT INTO tmp_status_pcs(pc_id, ping_result, ligado, momento) VALUES(:pc_id, :ping_result, :ligado , now())");
+	
+	$fields = array();
+	foreach ($obj as $key => $value)
+		$fields[':'.$key] = $value;
+
+	$stmt->execute($fields);
+
+	return $pdo->lastInsertId();
+}
+
