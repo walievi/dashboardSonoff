@@ -22,14 +22,13 @@ function prepareSelect($select){
 }
 
 function prepareWhere($where){
-
+	$wh = " WHERE 1 = 1 ";
 	if(count($where) > 0){
 		foreach ($where as $col => $value) {
-			$wh .= $col ." = '". $value ."' AND ";
+			$wh .= "AND ". $col ." = '". $value ."'";
 		}
-		return substr($wh, 0, -5);	
+		return $wh;	
 	}
-
 	return "";
 }
 
@@ -107,10 +106,6 @@ function getConfig($chave){
 	while($row = $rs->fetch(PDO::FETCH_OBJ)){
 		return $row->valor;
 	}
-
-	
-
-
 	
 }
 
@@ -121,8 +116,7 @@ function getTable($table, $select = "*", $where = array()){
 	$where = prepareWhere($where);
 
 	$con = connect();
-	$rs = $con->prepare("SELECT ". $select ." FROM ". $table ." WHERE ". ((empty($where)) ? "1 = 1" : $where) );
-
+	$rs = $con->prepare("SELECT ". $select ." FROM ". $table . $where);
 
 	if($rs->execute()){
 		if($rs->rowCount() > 0){
@@ -183,9 +177,73 @@ function insertPing($obj){
 	foreach ($obj as $key => $value)
 		$fields[':'.$key] = $value;
 
+	$stmt->execute($fields);
+
+	return $pdo->lastInsertId();
+}
+
+function registraEvento($equipId, $acao, $origem){
+	$pdo = connect();
+	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	$stmt = $pdo->prepare("INSERT INTO equipamento_evento(equipamento_id, tipo, origem, momento) VALUES(:equip_id, :tipo, :origem, now())");
+
+	$obj = new stdClass();
+	$obj->equip_id = $equipId;
+	$obj->tipo = $acao;
+	$obj->origem = $origem;
+
+	$fields = array();
+	foreach ($obj as $key => $value)
+		$fields[':'.$key] = $value;
 
 	$stmt->execute($fields);
 
 	return $pdo->lastInsertId();
+}
+
+
+function getLastStatus($equipId){
+
+	$con = connect();
+	$rs = $con->prepare("
+			SELECT *, 
+				IF (now() - INTERVAL (SELECT valor FROM configs WHERE chave = 'tempo_offlinepc') SECOND > momento, true , false) AS venceu	 
+			FROM equipamento_evento ev
+			WHERE equipamento_id = :equipId
+			ORDER BY momento DESC 
+			LIMIT 1
+		");
+
+	if(!$rs->execute(array(":equipId" => $equipId)))
+		throw new Exception("Erro ao executar a consulta", true);
+
+	while($row = $rs->fetch(PDO::FETCH_OBJ)){
+		return $row;
+	}
+
+	return;
+}
+
+
+function temPcsLigados($equipId){
+	$con = connect();
+	$rs = $con->prepare("SELECT temPcLigado(:equipId) AS ligado");
+
+
+	if(!$rs->execute(array(":equipId" => $equipId)))
+		throw new Exception("Erro ao executar a consulta", true);
+		
+
+	if($rs->rowCount() != 1)
+		throw new Exception("Erro na Chave", true);
+	
+
+	while($row = $rs->fetch(PDO::FETCH_OBJ)){
+		if($row->ligado)
+			return true;
+
+		return false;
+	}
 }
 

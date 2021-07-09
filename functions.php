@@ -57,28 +57,44 @@ function montaMatriz(){
 }
 
 
+    
+    function setTasmota($equip_id, $acao, $origem){
+        try {
+            $equip = getTable('equipamentos', "*", array("id" => $equip_id))[0]; 
 
+            tasmotaFaz($equip->ip, $acao);
 
+            registraEvento($equip->id, $acao, $origem);
 
-  function tasmotaFaz($ip, $acao){
+        } catch (Exception $e) {
+            //LOG de ERRO   
+            die("deu erro");
+        }
+    }
 
-      $tasmotaAcoes = array(
+    function getTasmota($equip_id, $acao){
+
+        $equip = getTable('equipamentos', "*", array("id" => $equip_id))[0]; 
+        return tasmotaFaz($equip->ip, $acao);        
+
+    }
+
+    function tasmotaFaz($ip, $acao){
+        $tasmotaAcoes = array(
           'getPowerStatus' => 'Power',
           'powerOn' => 'Power%20On',
           'powerOff' => 'Power%20off',
           'sensores' => 'Status%208'
 
-      );
+        );
 
-
-
-      if(!isset($tasmotaAcoes[$acao]))
-        throw new Exception("Ação inválida", true);
+        if(!isset($tasmotaAcoes[$acao]))
+            throw new Exception("Ação inválida", true);
         
 
-      $url = "http://". $ip ."/cm?cmnd=". $tasmotaAcoes[$acao];
+        $url = "http://". $ip ."/cm?cmnd=". $tasmotaAcoes[$acao];
 
-      return json_decode(requestUrl($url));
+        return json_decode(requestUrl($url));
   }
 
 
