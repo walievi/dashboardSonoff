@@ -150,7 +150,7 @@ function preparaGridPorLab($lab){
 
     foreach ($equips as $key => $equip) {
         $equips[$key]->{"Status dos PCs"} = (($equip->{"Status dos PCs"}) ? "Há PCs Ligados" : "Não Há PCs Ligados");
-        $equips[$key]->{"Ligar"} = '<button class="btn btn-success" onclick=" window.open(\'/dashboard/ligarPc.php?equipId='. $equip->id .'\',\'_blank\')"> Ligar</button>';
+        $equips[$key]->{"Ligar"} = '<button class="btn btn-success" onclick=" window.open(\'/ligarPc.php?equipId='. $equip->id .'\',\'_blank\')"> Ligar</button>';
     }
 
     return $equips;
