@@ -11,7 +11,7 @@
 
 
 
-	$leituras = getLeituras(100);
+	$leituras = getLeituras(50);
 	$errosLeituras = 0;
 
 
