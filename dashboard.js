@@ -1,6 +1,7 @@
 /* globals Chart:false, feather:false */
 
 (function () {
+
   'use strict'
 
   feather.replace({ 'aria-hidden': 'true' })
@@ -11,37 +12,21 @@
   var myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: [
-        'Domingo',
-        'Segunda',
-        'Terça',
-        'Quarta',
-        'Quinta',
-        'Sexta',
-        'Sábado'
-      ],
+      labels: colunas,
       datasets: [{
-        data: [
-          15,
-          21,
-          18,
-          24,
-          23,
-          24,
-          99
-        ],
+        data: dados,
         lineTension: 0,
         backgroundColor: 'transparent',
         borderColor: '#007bff',
         borderWidth: 4,
         pointBackgroundColor: '#007bff'
-      }]
+      }],
     },
     options: {
       scales: {
         yAxes: [{
           ticks: {
-            beginAtZero: false
+            beginAtZero: true
           }
         }]
       },

@@ -34,8 +34,8 @@ error_reporting(E_ALL);
 			$info = getTasmota($equip->id, "getPowerStatus");
 
 			$acoes = array(
-				"ON" => "PowerOn",
-				"OFF" => "PowerOff"
+				"ON" => "powerOn",
+				"OFF" => "powerOff"
 			);
 
 			if($acoes[$info->POWER] != getLastStatus($equip->id)->tipo)
@@ -43,15 +43,6 @@ error_reporting(E_ALL);
 
 		}
 	}
-
-
-
-
-
-
-
-
-
 
 
 

@@ -52,8 +52,37 @@ function menus($menus, $current = ""){
 }
 
 
-function montaMatriz(){
-  echo '<script src="dashboard.js"></script>';
+function montaMatriz($periodo = "sem", $fim = "now()"){
+
+    $periodos = array("hora", "dia", "sem", "mes", "ano");
+    if(!in_array($periodo, $periodos))
+        throw new Exception("Periodo Inválido", true);
+    
+
+    $dados = getDadosConsumo(1, "hora", $fim);
+
+
+    montaDadosParaMatriz($dados);
+
+    echo '<script src="dashboard.js"></script>';
+}
+
+
+function montaDadosParaMatriz($dados){
+
+    $colunas = array();
+    $valores = array();
+
+    foreach ($dados as $col => $value) {
+        $colunas[] = $col;
+        $valores[] = $value;
+    }
+
+
+    echo "<script>";
+        echo "var colunas = ". json_encode($colunas) .";";
+        echo "var dados = ". json_encode($valores) .";";
+    echo "</script>";
 }
 
 
@@ -67,8 +96,12 @@ function montaMatriz(){
             registraEvento($equip->id, $acao, $origem);
 
         } catch (Exception $e) {
-            //LOG de ERRO   
-            die("deu erro");
+            $log = new stdClass();
+            $log->Equipamento_ID    = $equipId;
+            $log->Acao              = $cao;
+            $log->Origem            = $origem;
+            $log->Mensagem          = $e->getMessage();
+            registraLog("ErroTarefaTasmota", $log);
         }
     }
 
@@ -111,5 +144,16 @@ function montaMatriz(){
       return $contents;
   }
 
+
+function preparaGridPorLab($lab){
+    $equips = getEquipamentosPorLab(1);
+
+    foreach ($equips as $key => $equip) {
+        $equips[$key]->{"Status dos PCs"} = (($equip->{"Status dos PCs"}) ? "Há PCs Ligados" : "Não Há PCs Ligados");
+        $equips[$key]->{"Ligar"} = '<button class="btn btn-success" onclick=" window.open(\'/dashboard/ligarPc.php?equipId='. $equip->id .'\',\'_blank\')"> Ligar</button>';
+    }
+
+    return $equips;
+}
 
 

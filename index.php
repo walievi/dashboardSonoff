@@ -1,4 +1,5 @@
 <?php require_once "functions.php" ?>
+<?php require_once "database.php" ?>
 
 <?php include "temp.php"; ?>
 
@@ -9,8 +10,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.84.0">
     <title>Dashboard de Consumo</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
@@ -83,12 +82,10 @@
 
       <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
 
-      <h2>Section title</h2>
+      <h2>Equipamentos de Monitoramento</h2>
       <div class="table-responsive">
 
-        <?php montaGrid(array("coluna1", "coluna2", "coluna3", "coluna4"), $array) ?>
-
-
+        <?php montaGrid(array("Nome do Equipamento", "IP", "Status dos PCs", "Potência Atual", "Ligar"), preparaGridPorLab(1)) ?>
 
       </div>
     </main>
@@ -99,7 +96,7 @@
     <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
 
       <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>      
       <?php montaMatriz() ?>
   </body>
 </html>

@@ -247,3 +247,115 @@ function temPcsLigados($equipId){
 	}
 }
 
+
+function getDadosConsumo($equipId, $periodo, $fim = "now()"){
+	switch ($periodo) {
+		case 'dia':
+			$query = "SELECT kWh, formatada FROM vw_dados_consumo_dia WHERE ts > (". $fim ." - INTERVAL 30 DAY)";
+			break;
+		
+		case 'mes':
+			$query = "SELECT kWh, formatada FROM vw_dados_consumo_mes WHERE ts > (". $fim ." - INTERVAL 12 MONTH)";
+			break;
+
+		case 'ano':
+			$query = "SELECT kWh, formatada FROM vw_dados_consumo_ano";
+			break;
+
+		case 'hora':
+			$query = "SELECT kWh, SUBSTR(formatada, 1, 3) AS formatada FROM vw_dados_consumo_hora WHERE data > (". $fim ." - INTERVAL 24 HOUR)";
+			break;
+
+		case 'sem':
+			$query = "SELECT kWh, formatada FROM vw_dados_consumo_dia WHERE ts > (". $fim ." - INTERVAL 7 DAY)";
+			break;
+
+		default:
+			throw new Exception("Periodo Inválido", true);			
+	}
+	$con = connect();
+
+	$rs = $con->prepare($query);
+
+	if(!$rs->execute())
+		throw new Exception("Erro na Consulta", true);
+
+	if($rs->rowCount() == 0)
+		return array();
+
+	$registros = array();
+	while($row = $rs->fetch(PDO::FETCH_OBJ)){
+		$registros[$row->formatada] = $row->kWh;
+	}
+
+	return $registros;
+
+}
+
+
+function getEquipamentosPorLab($labId){
+	$labId = 1;
+	$equipamentos = getTable("equipamentos", array('id', 'nome', 'ip', 'temPcLigado(id) as temPcLigado'), array("ativo" => 1, "laboratorio_id" => $labId));
+
+	$nomesCol = array(
+		"nome" => "Nome do Equipamento",
+		"ip" => "IP",
+		"temPcLigado" => "Status dos PCs"
+	);
+
+	$lista = alteraNomesParaExib($nomesCol, $equipamentos);
+	foreach ($lista as $key => $value) {
+		$lista[$key]->{"Potência Atual"} = getPotenciaMedia($value->id) ." Watts";
+	}
+
+	return $lista;
+}
+
+function alteraNomesParaExib($nomesCol, $registros){
+	$return = array();
+	foreach ($registros as $reg) {
+
+		$obj = new stdClass();
+
+		foreach ($reg as $key => $value) {
+			if(isset($nomesCol[$key]))
+				$obj->{$nomesCol[$key]} = $value;
+			else
+				$obj->{$key} = $value;
+		}
+
+		$return[] = $obj;
+	}
+
+	return $return;
+}
+
+
+
+function getPotenciaMedia($equipId){
+	$query = "
+		SELECT FORMAT(AVG(potencia),2) AS potenciaMedia
+		FROM dados_leitura
+		WHERE equipamento_id = :equipId 
+			AND momento > NOW() - INTERVAL 5 MINUTE
+		    GROUP BY equipamento_id
+	";
+
+	$con = connect();
+
+	$rs = $con->prepare($query);
+
+	if(!$rs->execute(array(":equipId" => $equipId)))
+		throw new Exception("Erro na Consulta", true);
+
+	if($rs->rowCount() == 0)
+		return array();
+
+	$registros = array();
+	while($row = $rs->fetch(PDO::FETCH_OBJ)){
+		return $row->potenciaMedia;
+	}
+
+	return $registros;
+
+}
