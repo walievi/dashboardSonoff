@@ -11,7 +11,7 @@
 
 
 
-	$leituras = getLeituras(50);
+	$leituras = getLeituras(100);
 	$errosLeituras = 0;
 
 
@@ -26,18 +26,18 @@
 
 			$obj->tensao = $retorno->Voltage;
 			$obj->potencia = $retorno->Power;
-			@$obj->corrente = (float) (((int) $retorno->Power) / ((int) $retorno->Voltage)); 
+			@$obj->corrente = (float) ((((int) $retorno->Voltage) == 0) ? 0 : (((int) $retorno->Power) / ((int) $retorno->Voltage))); 
 
 			$idLeituras[] = $leitura->id;
 
 			foreach ($obj as $key => $value){
-				if(empty($value)){			
+				if(is_null($value)){			
 					$log = new stdClass();
 					$log->Equipamento_ID = $leitura->equipamento_id;
 					$log->mensagem = "Erro na Leitura";
 					$log->valores = $obj;
 					$logs[] = $log;
-
+var_dump($log);echo '<br/>';
 					throw new Exception("Erro na Leitura", true);
 				}
 			}
