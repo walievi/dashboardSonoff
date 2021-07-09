@@ -93,7 +93,7 @@ function saveDadosConsumo($dados, $leituras){
 function getConfig($chave){
 
 	$con = connect();
-	$rs = $con->prepare("SELECT valor FROM informacoes WHERE chave = :chave ");
+	$rs = $con->prepare("SELECT valor FROM configs WHERE chave = :chave ");
 
 
 	if(!$rs->execute(array(":chave" => $chave)))
@@ -177,11 +177,12 @@ function insertPing($obj){
 	$pdo = connect();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	$stmt = $pdo->prepare("INSERT INTO tmp_status_pcs(pc_id, ping_result, ligad, momento) VALUES(:pc_id, :ping_result, :ligado , now())");
+	$stmt = $pdo->prepare("INSERT INTO tmp_status_pcs(pc_id, ping_result, ligado, momento) VALUES(:pc_id, :ping_result, :ligado , now())");
 	
 	$fields = array();
 	foreach ($obj as $key => $value)
 		$fields[':'.$key] = $value;
+
 
 	$stmt->execute($fields);
 
