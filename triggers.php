@@ -11,19 +11,20 @@ error_reporting(E_ALL);
 	function desligAutomatico(){
 		foreach (getTable('equipamentos', "*", array("ativo" => true)) as $equip) {
 
+			if(temPcsLigados($equip->id))
+				continue;
+
 			if(!getLastStatus($equip->id)->venceu)
 				continue;
 
-			if(!temPcsLigados($equip->id)){
+			$info = getTasmota($equip->id, "getPowerStatus");
 
-				$info = getTasmota($equip->id, "getPowerStatus");
-
-				if($info->POWER != "ON")
-					continue;
+			if($info->POWER != "ON")
+				continue;
 
 
-				setTasmota($equip->id, "powerOff", "Automático");	
-			}
+			setTasmota($equip->id, "powerOff", "Automático");	
+			
 		}
 	}
 
